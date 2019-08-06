@@ -45,7 +45,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
+        // this is a way how to re-use existing instances of table cells and don't create a new ones for every
+        // item, even those which are out of user view
+        // for identifier see the design view -> properties of table cell prototype
+        let cell = tableView.dequeueReusableCell(withIdentifier: "normalCellStyle", for: indexPath)
         switch indexPath.section {
         case 0:
             cell.textLabel?.text = dailyTasks[indexPath.row]
@@ -56,6 +59,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         default:
             cell.textLabel?.text = "This should not happen"
         }
+        cell.imageView?.image = UIImage(named: "dice") // add an assset image into the image view of cell
+        cell.accessoryType = .disclosureIndicator
+        cell.detailTextLabel?.text = "This is some detail"
+        
         return cell
     }
     
