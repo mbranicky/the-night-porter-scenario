@@ -16,31 +16,33 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0:
-            return "Daily Tasks"
-        case 1:
-            return "Weekly Tasks"
-        case 2:
-            return "Monthly Tasks"
-        default:
-            return nil
+            case 0:
+                return "Daily Tasks"
+            case 1:
+                return "Weekly Tasks"
+            case 2:
+                return "Monthly Tasks"
+            default:
+                return nil
         }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
+        // set the table view transparent background
+        tableView.backgroundColor = UIColor.clear
         return 3
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0:
-            return dailyTasks.count
-        case 1:
-            return weeklyTasks.count
-        case 2:
-            return monthlyTasks.count
-        default:
-            return 0
+            case 0:
+                return dailyTasks.count
+            case 1:
+                return weeklyTasks.count
+            case 2:
+                return monthlyTasks.count
+            default:
+                return 0
         }
     }
     
@@ -50,18 +52,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // for identifier see the design view -> properties of table cell prototype
         let cell = tableView.dequeueReusableCell(withIdentifier: "normalCellStyle", for: indexPath)
         switch indexPath.section {
-        case 0:
-            cell.textLabel?.text = dailyTasks[indexPath.row]
-        case 1:
-            cell.textLabel?.text = weeklyTasks[indexPath.row]
-        case 2:
-            cell.textLabel?.text = monthlyTasks[indexPath.row]
-        default:
-            cell.textLabel?.text = "This should not happen"
+            case 0:
+                cell.textLabel?.text = dailyTasks[indexPath.row]
+            case 1:
+                cell.textLabel?.text = weeklyTasks[indexPath.row]
+            case 2:
+                cell.textLabel?.text = monthlyTasks[indexPath.row]
+            default:
+                cell.textLabel?.text = "This should not happen"
         }
-        cell.imageView?.image = UIImage(named: "dice") // add an assset image into the image view of cell
+        cell.imageView?.image = UIImage(named: "taskIcon") // add an assset image into the image view of cell
         cell.accessoryType = .disclosureIndicator
         cell.detailTextLabel?.text = "This is some detail"
+        // set the cell transparent background
+        cell.backgroundColor = UIColor.clear
         
         return cell
     }
@@ -76,12 +80,22 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     let weeklyTasks = [
         "Flush all lavatories in cabins", "Check inside all cabins", "Walk the perimeter of property",
-        "Clean the entrance windows", "Wash the main chanber floor"
+        "Clean the entrance windows", "Wash the main chamber floor"
     ]
     
     let monthlyTasks = [
         "Test smoke alarms", "Test motion detectors", "Test security alarm"
     ]
+    
+    // action for dark mode switch
+    @IBAction func toggleDarkMode(_ sender: Any) {
+        let mySwitch = sender as! UISwitch
+        if mySwitch.isOn {
+            view.backgroundColor = UIColor.darkGray
+        } else {
+            view.backgroundColor = UIColor.white
+        }
+    }
     
 
     override func viewDidLoad() {
