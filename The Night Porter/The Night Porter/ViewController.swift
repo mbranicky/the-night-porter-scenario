@@ -10,9 +10,37 @@ import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    // Table View Delegate methods
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Selected a cell at row \(indexPath.row) from section \(indexPath.section)")
     }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        // create an action for swipe configuration
+        // 'handler' parameter is an anonymouse function, or lambda as in Java
+        let completeAction = UIContextualAction(style: .normal, title: "Complete", handler: { (action: UIContextualAction, source: UIView, actionPerformed: (Bool) -> Void) in
+            
+            // find the right object and mark it as completed
+            switch indexPath.section {
+                case 0:
+                    self.dailyTasks[indexPath.row].comleted = true
+                case 1:
+                    self.weeklyTasks[indexPath.row].comleted = true
+                case 2:
+                    self.monthlyTasks[indexPath.row].comleted = true
+                default:
+                    break
+            }
+            tableView.reloadData() // to update tasks visually
+            
+            actionPerformed(true) // to let the iOS know the action was completed
+        })
+        
+        return UISwipeActionsConfiguration(actions: [completeAction])
+    }
+    
+    // Table View Datasource methods
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
@@ -51,42 +79,68 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         // item, even those which are out of user view
         // for identifier see the design view -> properties of table cell prototype
         let cell = tableView.dequeueReusableCell(withIdentifier: "normalCellStyle", for: indexPath)
+        
+        var currentTask: Task!
+        
         switch indexPath.section {
             case 0:
-                cell.textLabel?.text = dailyTasks[indexPath.row]
+                currentTask = dailyTasks[indexPath.row]
             case 1:
-                cell.textLabel?.text = weeklyTasks[indexPath.row]
+                currentTask = weeklyTasks[indexPath.row]
             case 2:
-                cell.textLabel?.text = monthlyTasks[indexPath.row]
+                currentTask = monthlyTasks[indexPath.row]
             default:
-                cell.textLabel?.text = "This should not happen"
+                break
         }
+        
+        // set the cell text content
+        cell.textLabel?.text = currentTask.name
+        
+        // determine the cell text color based on task state
+        if currentTask.comleted {
+            cell.textLabel?.textColor = UIColor.lightGray
+            cell.accessoryType = .checkmark
+        } else {
+             cell.textLabel?.textColor = UIColor.black
+            cell.accessoryType = .disclosureIndicator
+        }
+        
         cell.imageView?.image = UIImage(named: "taskIcon") // add an assset image into the image view of cell
-        cell.accessoryType = .disclosureIndicator
+        
         cell.detailTextLabel?.text = "This is some detail"
+        
         // set the cell transparent background
         cell.backgroundColor = UIColor.clear
         
         return cell
     }
     
+    // Tasks data sections as Task[]
     
-    // Tasks sections as String[]
-    let dailyTasks = [
-        "Check all windows", "Check all doors", "Is the boiler fueled",
-        "Check the mailbox", "Empty trash bins", "If freezing check the pipes",
-        "Write down all 'suspicious' activities",
+    var dailyTasks = [
+        Task(name: "Check all windows", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "Check all doors", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "Is the boiler fueled", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "Check the mailbox", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "Empty trash bins", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "If freezing check the pipes", type: .daily, comleted: false, lastCompleted: nil),
+        Task(name: "Write down all 'suspicious' activities", type: .daily, comleted: false, lastCompleted: nil)
     ]
-    
-    let weeklyTasks = [
-        "Flush all lavatories in cabins", "Check inside all cabins", "Walk the perimeter of property",
-        "Clean the entrance windows", "Wash the main chamber floor"
+   
+    var weeklyTasks = [
+        Task(name: "Flush all lavatories in cabins", type: .weekly, comleted: false, lastCompleted: nil),
+        Task(name: "Check inside all cabins", type: .weekly, comleted: false, lastCompleted: nil),
+        Task(name: "Walk the perimeter of property", type: .weekly, comleted: false, lastCompleted: nil),
+        Task(name: "Clean the entrance windows", type: .weekly, comleted: false, lastCompleted: nil),
+        Task(name: "Wash the main chamber floor", type: .weekly, comleted: false, lastCompleted: nil)
     ]
-    
-    let monthlyTasks = [
-        "Test smoke alarms", "Test motion detectors", "Test security alarm"
+
+    var monthlyTasks = [
+        Task(name: "Test smoke alarms", type: .monthly, comleted: false, lastCompleted: nil),
+        Task(name: "Test motion detectors", type: .monthly, comleted: false, lastCompleted: nil),
+        Task(name: "Test security alarm", type: .monthly, comleted: false, lastCompleted: nil)
     ]
-    
+
     // action for dark mode switch
     @IBAction func toggleDarkMode(_ sender: Any) {
         let mySwitch = sender as! UISwitch
