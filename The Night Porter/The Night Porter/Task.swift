@@ -15,6 +15,6 @@ enum TaskType {
 struct Task {
     var name: String
     var type: TaskType
-    var comleted: Bool
+    var completed: Bool
     var lastCompleted: NSDate? // optional date field    
 }
